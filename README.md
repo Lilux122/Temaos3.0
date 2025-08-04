@@ -44,7 +44,7 @@ pip install platformio
 ```
 2. Клонируйте репозиторий:
 ```bash
-git clone https://github.com/Lilux122/Temaos3.0-.git
+git clone https://github.com/Lilux122/Temaos3.0.git
 ```
 3. Перейдите в папку с проектом:
 ```bash
