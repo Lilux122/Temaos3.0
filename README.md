@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Tema OS Logo](https://img.shields.io/badge/Tema%20OS-v3.0-brightgreen?style=for-the-badge&logo=arduino)
+![Tema OS Logo](https://img.shields.io/badge/Tema%20OS-v3.5-brightgreen?style=for-the-badge&logo=arduino)
 
 [![ESP32](https://img.shields.io/badge/ESP32-Compatible-red?style=flat-square&logo=espressif)](https://www.espressif.com/)
 [![PlatformIO](https://img.shields.io/badge/PlatformIO-Ready-blue?style=flat-square&logo=platformio)](https://platformio.org/)
