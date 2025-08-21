@@ -156,10 +156,10 @@ pio run --target upload
 
 [![MicroReader](https://img.shields.io/badge/🔧%20MicroReader-За%20функции-blue?style=for-the-badge)](https://github.com/Nich1con/microReader/)
 
-[![Catos](https://img.shields.io/badge/🔧%20Сatos-За%20функции-blue?style=for-the-badge)](https://github.com/CatDevCode/CatOs.git)
+[![Catos](https://img.shields.io/badge/🔧%20Сatos-За%20функции-red?style=for-the-badge)](https://github.com/CatDevCode/CatOs.git)
 
 
-[![Catoslite](https://img.shields.io/badge/🔧%20Сatoslite-За%20функции-blue?style=for-the-badge)](https://github.com/CatDevCode/CatOs_Lite.git)
+[![Catoslite](https://img.shields.io/badge/🔧%20Сatoslite-За%20функции-orange?style=for-the-badge)](https://github.com/CatDevCode/CatOs_Lite.git)
 
 </div>
 
