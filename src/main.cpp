@@ -7,7 +7,6 @@
 #include <Wire.h>
 #include <math.h>
 
-// Настройки пинов
 #define UP_BTN_PIN 19
 #define DOWN_BTN_PIN 17
 #define RIGHT_BTN_PIN 18
@@ -15,7 +14,6 @@
 #define SELECT_BTN_PIN 27
 #define EXIT_BTN_PIN 14
 
-// Инициализация дисплея и кнопок
 GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
 GButton upBtn(UP_BTN_PIN);
 GButton downBtn(DOWN_BTN_PIN);
@@ -27,7 +25,6 @@ GButton exitBtn(EXIT_BTN_PIN);
 GTimer gameTimer(MS, 20);
 WebServer server(80);
 
-// Переменные состояния
 enum SystemState {
   BOOT,
   MAIN_MENU,
@@ -59,7 +56,6 @@ enum SystemState {
 SystemState currentState = BOOT;
 SystemState previousState = BOOT;
 
-// --- Состояние меню ---
 struct MenuState {
     int index = 0;
     int page = 0;
@@ -68,7 +64,7 @@ struct MenuState {
 };
 
 File uploadFile;
-File readerFile; // Глобальный объект файла для читалки
+File readerFile; 
 
 MenuState mainMenuState;
 MenuState settingsMenuState;
@@ -78,25 +74,25 @@ MenuState gamesMenuState;
 
 bool wifiAPMode = false;
 
-// --- Структуры для игр и приложений ---
 
-// --- Структура для Динозавра ---
+
+
 struct DinoGame {
-  int dinoY = 47; float dinoSpeed = 0; int obstacleX = 128; int score = 0;
+  int dinoY = 47; float dinoSpeed = 0; float obstacleX = 128; int score = 0; 
   bool gameOver = false; bool jumping = false; bool crouching = false; bool legFlag = true;
-  bool birdFlag = true; int8_t enemyType = 0; uint8_t gameSpeed = 6;
+  bool birdFlag = true; int8_t enemyType = 0; float gameSpeed = 1.5; 
   unsigned long lastScoreUpdate = 0; unsigned long lastEnemyUpdate = 0;
   unsigned long lastLegUpdate = 0; unsigned long lastBirdUpdate = 0; unsigned long lastDinoUpdate = 0;
 };
 
-// --- Структура для Змейки ---
+
 struct SnakeGame {
   static const int MAX_LENGTH = 80; int snakeX[MAX_LENGTH]; int snakeY[MAX_LENGTH];
   int snakeLength = 4; int foodX, foodY; int dirX = 1, dirY = 0; int score = 0;
   bool gameOver = false; int segmentSize = 4; unsigned long lastMoveTime = 0; int moveDelay = 150;
 };
 
-// --- Структура для Тетриса ---
+
 struct TetrisGame {
   static const int FIELD_WIDTH = 10; static const int FIELD_HEIGHT = 16;
   byte field[FIELD_HEIGHT][FIELD_WIDTH] = {0}; byte currentPieceType; byte nextPieceType;
@@ -104,47 +100,47 @@ struct TetrisGame {
   int score = 0; bool gameOver = false; unsigned long lastDropTime = 0; int dropDelay = 500;
 };
 
-// --- Структура для Арканоида ---
+
 struct ArkanoidGame {
   int paddleX = 54; int ballX = 64, ballY = 55; float ballVelX = 1.0, ballVelY = 1.0;
   bool bricks[5][10]; int score = 0; bool gameOver = false; int paddleWidth = 24; int ballSize = 2;
 };
 
-// --- Структура для Секундомера ---
+
 struct StopwatchApp {
   unsigned long startTime = 0; unsigned long elapsedTime = 0; bool running = false;
 };
 
-// --- Структура для Счетчика ---
+
 struct CounterApp { int count = 0; };
 
-// --- Структура для Таймера ---
+
 struct TimerAppState {
     unsigned long setTime = 0; unsigned long startTime = 0;
     bool running = false; bool alarmTriggered = false;
 };
 
-// --- Структура для Рисовалки ---
+
 struct DrawAppState { int cursorX = 64; int cursorY = 32; };
 
-// --- Структура для Конвертера температуры ---
+
 struct TempConverterState {
     float celsius = 0.0; float fahrenheit = 32.0; bool convertingCtoF = true;
 };
 
-// --- Структура для Текстового редактора ---
+
 struct TextEditorState {
     String filename = ""; String content = ""; int cursorPos = 0; bool isNewFile = true;
 };
 
-// --- Структура для Понга ---
+
 struct PongGame {
     float paddle1Y = 24; float paddle2Y = 24; float ballX = 64, ballY = 32;
     float ballVelX = 1.5, ballVelY = 1.0; int score1 = 0, score2 = 0;
     bool gameOver = false; int paddleHeight = 16; int ballSize = 3;
 };
 
-// --- Структура для Астероидов ---
+
 struct AsteroidsGame {
     float shipX = 64, shipY = 50; float shipVelX = 0, shipVelY = 0; float shipAngle = 0;
     bool thrusting = false; bool gameOver = false; int score = 0;
@@ -154,7 +150,7 @@ struct AsteroidsGame {
     Asteroid asteroids[MAX_ASTEROIDS]; Bullet bullets[MAX_BULLETS];
 };
 
-// --- Структура для Flappy Bird ---
+
 struct FlappyBirdGame {
     float birdY = 32; float birdVel = 0; static const int MAX_PIPES = 5;
     struct Pipe { int x; int gapY; bool passed; };
@@ -492,6 +488,7 @@ void handleFileCreate() {
 }
 
 void handleRoot() {
+  // ИЗМЕНЕНО: Обновлен HTML для соответствия .h файлам
   String html = R"rawliteral(
   <!DOCTYPE html><html><head><meta charset='utf-8'><title>TemaOS File Manager</title>
   <style>
@@ -511,9 +508,9 @@ void handleRoot() {
   <h1>TemaOS File Manager</h1>
   <h2>Создать/Загрузить файл</h2>
   <form id="createForm" action="/create" method="post">
-    <label for="filename">Имя файла (например, test.txt или image.tos):</label>
+    <label for="filename">Имя файла (например, test.txt или image.h):</label>
     <input type="text" id="filename" name="filename" required>
-    <label for="content">Содержимое (для .tos вставьте массив байтов):</label>
+    <label for="content">Содержимое (для .h вставьте массив байтов как в примере):</label>
     <textarea id="content" name="content" required></textarea>
     <button type="submit">Создать Файл</button>
   </form>
@@ -956,7 +953,8 @@ void handleDinoGame() {
     return; 
   }
   if (upBtn.isClick() && dino.dinoY >= 47 && !dino.jumping) {
-    dino.dinoSpeed = -2.8;
+    // ИЗМЕНЕНО: Увеличена начальная скорость прыжка для большей высоты
+    dino.dinoSpeed = -3.5;
     dino.jumping = true;
     dino.crouching = false; 
   }
@@ -970,13 +968,15 @@ void handleDinoGame() {
   if (currentMillis - dino.lastScoreUpdate >= 100) {
     dino.lastScoreUpdate = currentMillis;
     dino.score++;
-    if (dino.score < 500) {
-      dino.gameSpeed = constrain(map(dino.score, 0, 500, 6, 2), 2, 6);
-    } else {
-      dino.gameSpeed = 2;
+    // ИЗМЕНЕНО: Логика ускорения игры
+    if (dino.score > 0 && dino.score % 100 == 0) {
+      dino.gameSpeed += 0.25; // Постепенно увеличиваем скорость
     }
   }
-  dino.obstacleX--;
+  
+  // ИЗМЕНЕНО: Движение препятствия зависит от скорости игры
+  dino.obstacleX -= dino.gameSpeed;
+
   if (dino.obstacleX < -24) {
     dino.obstacleX = 128;
     dino.enemyType = random(0, 3);
@@ -1002,8 +1002,8 @@ void handleDinoGame() {
   int dinoRight = dino.crouching ? 16 : 16;
   int dinoTop = dino.dinoY;
   int dinoBottom = dino.crouching ? dino.dinoY + 8 : dino.dinoY + 16;
-  int obstacleLeft = dino.obstacleX;
-  int obstacleRight = dino.obstacleX + (dino.enemyType == 1 ? 24 : 16);
+  int obstacleLeft = (int)dino.obstacleX;
+  int obstacleRight = (int)dino.obstacleX + (dino.enemyType == 1 ? 24 : 16);
   int obstacleTop = (dino.enemyType == 2) ? 35 : 48;
   int obstacleBottom = (dino.enemyType == 2) ? 35 + 16 : 48 + 16;
   if ((dinoLeft < obstacleRight) && (dinoRight > obstacleLeft) && (dinoTop < obstacleBottom) && (dinoBottom > obstacleTop)) {
@@ -1014,9 +1014,9 @@ void handleDinoGame() {
   oled.line(0, 63, 127, 63);
   if (dino.obstacleX >= -24 && dino.obstacleX < 128) {
     switch (dino.enemyType) {
-      case 0: oled.drawBitmap(dino.obstacleX, 48, CactusSmall_bmp, 16, 16); break;
-      case 1: oled.drawBitmap(dino.obstacleX, 48, CactusBig_bmp, 24, 16); break;
-      case 2: oled.drawBitmap(dino.obstacleX, 35, dino.birdFlag ? BirdL_bmp : BirdR_bmp, 24, 16); break;
+      case 0: oled.drawBitmap((int)dino.obstacleX, 48, CactusSmall_bmp, 16, 16); break;
+      case 1: oled.drawBitmap((int)dino.obstacleX, 48, CactusBig_bmp, 24, 16); break;
+      case 2: oled.drawBitmap((int)dino.obstacleX, 35, dino.birdFlag ? BirdL_bmp : BirdR_bmp, 24, 16); break;
     }
   }
   if (dino.gameOver) oled.drawBitmap(0, dino.dinoY, DinoStandDie_bmp, 16, 16);
@@ -1464,7 +1464,8 @@ int getReaderFilesCount() {
   File file = root.openNextFile();
   while (file) {
     String filename = file.name();
-    if (filename.endsWith(".txt") || filename.endsWith(".tos")) {
+    // ИЗМЕНЕНО: Ищем .h вместо .tos
+    if (filename.endsWith(".txt") || filename.endsWith(".h")) {
       count++;
     }
     file.close();
@@ -1480,7 +1481,8 @@ String getReaderFilenameByIndex(int idx) {
   File file = root.openNextFile();
   while (file) {
     String filename = file.name();
-    if (filename.endsWith(".txt") || filename.endsWith(".tos")) {
+    // ИЗМЕНЕНО: Ищем .h вместо .tos
+    if (filename.endsWith(".txt") || filename.endsWith(".h")) {
       if (i == idx) {
         file.close();
         root.close();
@@ -1526,26 +1528,35 @@ bool drawReaderFileMenu() {
   return true;
 }
 
-bool parseTosFile(uint8_t *img, File &file) {
+// НОВАЯ ФУНКЦИЯ: Взята из catoslite.cpp для парсинга .h файлов
+uint8_t parseHFile(uint8_t *img, File &file) {
   int imgLen = 0;
-  memset(img, 0, 1024);
-  while (file.available()) { if (file.read() == '{') break; }
+  memset(img, 0, 1024); // Очистка буфера
+
+  // Пропускаем все символы до '{'
+  while (file.available()) {
+    if (file.read() == '{') break;
+  }
+
+  // Читаем данные до '}' или конца файла
   while (file.available() && imgLen < 1024) {
     char c = file.read();
-    if (c == '}') break;
+    if (c == '}') break; // Конец данных
+    
+    // Парсим HEX-значения вида 0xXX
     if (c == '0' && file.peek() == 'x') {
-      file.read();
+      file.read(); // Пропускаем 'x'
       char hex[3] = {0};
       hex[0] = file.read();
       hex[1] = file.read();
-      img[imgLen++] = strtoul(hex, NULL, 16);
+      img[imgLen++] = strtoul(hex, NULL, 16); // Конвертируем HEX в байт
     }
-    yield();
+    yield(); // Для стабильности ESP
   }
-  return (imgLen > 0);
+
+  return (imgLen > 0) ? 0 : 1; // 0 = успех, 1 = ошибка (если ничего не найдено)
 }
 
-// ИЗМЕНЕНО: Эта функция заменена на версию с ручным переносом слов из catoslite.cpp для надежности
 void drawTextPage(bool storeHistory = true) {
   if (storeHistory) {
     if (readerApp.currentHistoryIndex < readerApp.MAX_PAGE_HISTORY - 1) {
@@ -1556,16 +1567,15 @@ void drawTextPage(bool storeHistory = true) {
   }
   oled.clear();
   oled.home();
-  oled.setScale(1); // Используем стандартный шрифт 8x6 пикселей
+  oled.setScale(1); 
 
-  const uint8_t maxCharsPerLine = 21; // 128px / 6px ширина символа
+  const uint8_t maxCharsPerLine = 21; 
   uint8_t currentLine = 0;
 
-  // Верхняя строка для информации
   oled.setCursor(0, 0);
   oled.print(readerFile.name());
   
-  while (readerFile.available() && currentLine < 7) { // 7 строк для текста + 1 для заголовка
+  while (readerFile.available() && currentLine < 7) { 
     String line = readerFile.readStringUntil('\n');
     line.trim();
 
@@ -1577,7 +1587,6 @@ void drawTextPage(bool storeHistory = true) {
         line = "";
       } else {
         int breakPoint = -1;
-        // Ищем последний пробел в пределах длины строки
         for (int i = maxCharsPerLine; i >= 0; i--) {
           if (line.charAt(i) == ' ') {
             breakPoint = i;
@@ -1587,12 +1596,10 @@ void drawTextPage(bool storeHistory = true) {
 
         String partToPrint;
         if (breakPoint != -1) {
-          // Разрываем по пробелу
           partToPrint = line.substring(0, breakPoint);
           line = line.substring(breakPoint + 1);
           line.trim(); 
         } else {
-          // Если пробела нет, режем слово
           partToPrint = line.substring(0, maxCharsPerLine);
           line = line.substring(maxCharsPerLine);
         }
@@ -1606,7 +1613,8 @@ void drawTextPage(bool storeHistory = true) {
   oled.update();
 }
 
-void viewTosFile(String filename) {
+// НОВАЯ ФУНКЦИЯ: Для отображения .h файлов
+void viewHFile(String filename) {
     String fullPath = "/" + filename;
     File file = LittleFS.open(fullPath.c_str(), "r");
     if (!file) {
@@ -1616,10 +1624,11 @@ void viewTosFile(String filename) {
         drawReaderFileMenu();
         return;
     }
-    uint8_t *img = new uint8_t[1024];
-    if (!parseTosFile(img, file)) {
-        delete[] img; file.close(); 
-        showMessage("Ошибка .tos");
+    uint8_t *img = new uint8_t[1024]; // 128x64 / 8 = 1024
+    if (parseHFile(img, file) != 0) { // Если парсинг не удался
+        delete[] img; 
+        file.close(); 
+        showMessage("Ошибка .h");
         delay(1000);
         readerApp.inFileReader = false;
         drawReaderFileMenu();
@@ -1645,21 +1654,15 @@ void initReaderApp() {
 void handleReaderApp() {
   if (readerApp.inFileReader) {
     // --- РЕЖИМ ПРОСМОТРА ФАЙЛА ---
-    if (exitBtn.isClick()) {
-      readerFile.close();
+    // ИЗМЕНЕНО: Выход по любой кнопке для .h, только EXIT для .txt
+    if (exitBtn.isClick() || selectBtn.isClick()) {
+      if (readerFile) readerFile.close();
       readerApp.inFileReader = false;
       drawReaderFileMenu();
       return;
     }
-    // Для .tos файлов выход по SELECT тоже
-    if (selectBtn.isClick() && readerFile.name() && String(readerFile.name()).endsWith(".tos")) {
-       readerFile.close();
-       readerApp.inFileReader = false;
-       drawReaderFileMenu();
-       return;
-    }
 
-    if (readerFile.name() && String(readerFile.name()).endsWith(".txt")) {
+    if (readerFile && String(readerFile.name()).endsWith(".txt")) {
         if (upBtn.isClick() || upBtn.isHold()) {
             if (readerApp.currentHistoryIndex > 0) {
                 readerApp.currentHistoryIndex--;
@@ -1708,9 +1711,10 @@ void handleReaderApp() {
                 readerApp.currentHistoryIndex = -1;
                 readerApp.totalPages = 0;
                 drawTextPage();
-            } else if (filename.endsWith(".tos")) {
-                 // Для .tos мы просто отображаем и ждем выхода
-                 viewTosFile(filename);
+         
+            } else if (filename.endsWith(".h")) {
+                  //Для .h мы просто отображаем и ждем выхода
+                 viewHFile(filename);
             }
         }
     }
