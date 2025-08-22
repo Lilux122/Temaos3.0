@@ -12,7 +12,7 @@
 
 **Прошивка для портативной игровой консоли на базе ESP32 с OLED-дисплеем**
 
-[📱 Попробовать онлайн](https://catdevcode.github.io/CatOs_webflasher/) • [📖 Документация](https://github.com/Lilux122/Temaos3.0/wiki) • [🐛 Сообщить об ошибке](https://github.com/Lilux122/Temaos3.0/issues)
+ [📖 Документация](https://github.com/Lilux122/Temaos3.0/wiki) • [🐛 Сообщить об ошибке](https://github.com/Lilux122/Temaos3.0/issues)
 
 </div>
 
